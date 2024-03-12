@@ -216,41 +216,37 @@ void Display3() {
 
 // the graph of: x(t) = a/ 4cos^2(t) - 3 and y(t) = atan(t)/ 4cos^2(t) - 3, with t in (-pi/2, pi/2) \ {+-pi/6}.
 void Display4() {
+    //dem matematica de cum selectam sectorul in functie de eficineta
+    //selectam un sector si facem graficul pt el
+    //+triunghiuri  cu gl triangle
     double pi = 4 * atan(1.0);
 
-    double tmax = pi / 2;
-    double tmin = -pi / 2;
     double ratia = 0.01;
+    double tmax = -pi / 6- ratia;
+    double tmin = -pi / 2 + ratia;
 
     double a = 0.2;
 
-    double xmax, ymax, xmin, ymin;
 
-    /**********************************
-       Maximum/minimum values of x and y are computed.
-       x(t) and y(t) both have 4cos^2(t) - 3 as the divisor, witch aproches 0
-       in the t = +-pi/6 points so we can say that x(t) and y(t) approach +- inf in theese points
-       so we initialize all the xmax, ymax, xmin, ymin values with 0 and then compute it.
-      **********************************/
-    xmax = xmin = ymax = ymin = 0;
-    for (double t = tmin + ratia; t < tmax; t += ratia) {
-        double x1, y1;
-        if ((4 * cos(t) * cos(t)) != 0) {
-            x1 = (a / (4 * cos(t) * cos(t) - 3));
-            xmax = (xmax < x1) ? x1 : xmax;
-            xmin = (xmin > x1) ? x1 : xmin;
-
-            y1 = ((a * tan(t)) / (4 * cos(t) * cos(t) - 3));
-            ymax = (ymax < y1) ? y1 : ymax;
-            ymin = (ymin > y1) ? y1 : ymin;
-        }
-
-    }
-    std::cout << "\n xmin = " << xmin << " xmax = " << xmax << " ymin = " << ymin << " ymax = " << ymax;
-
-    xmax = (fabs(xmax) > fabs(xmin)) ? fabs(xmax) : fabs(xmin);
-    ymax = (fabs(ymax) > fabs(ymin)) ? fabs(ymax) : fabs(ymin);
-
+    //double xmin = 0, ymin = 0;
+    //double dmin = INFINITY;
+    //for (double t = tmin + ratia; t < tmax; t += ratia) {
+    //    double x1, y1;
+    //    if ((4 * cos(t) * cos(t)) != 0) {
+    //        x1 = (a / (4 * cos(t) * cos(t) - 3));
+    //        y1 = ((a * tan(t)) / (4 * cos(t) * cos(t) - 3));
+    //        if (sqrt(x1 * x1 + y1 * y1) < dmin) {
+    //            xmin = x1;
+    //            ymin = y1;
+    //            dmin = sqrt(x1 * x1 + y1 * y1);
+    //        }
+    //    }
+    //}
+    //double scale = (fabs(ymin) < fabs(xmin)) ? fabs(ymin) : fabs(xmin);
+    //scale = 1 / scale;
+    //xmin *= scale;
+    //ymin *= scale;
+    //std::cout << xmin << "  " << ymin << "  " << dmin;
     //Print the current value of a for this function
     glColor3f(0, 0, 0); // black
     glRasterPos2f(-0.8, -0.5);
@@ -268,14 +264,23 @@ void Display4() {
     for (int i = 0; text[i] != '\0'; ++i) {
         glutBitmapCharacter(GLUT_BITMAP_HELVETICA_12, text[i]);
     }
+
     glColor3f(1, 0.1, 0.1); // rosu
-    glBegin(GL_POINTS);
+    glBegin(GL_TRIANGLES);
     for (double t = tmin; t < tmax; t += ratia) {
         if ((4 * cos(t) * cos(t) - 3) != 0){
             double x1, y1;
-            x1 = (a/(4 * cos(t) * cos(t) -3)) / xmax;
-            y1 = ((a * tan(t)) / (4 * cos(t) * cos(t) -3)) / ymax;
-            glVertex2f(x1, y1);
+            x1 = (a / (4 * cos(t) * cos(t) - 3));
+            y1 = ((a * tan(t)) / (4 * cos(t) * cos(t) - 3));
+            double next_x1, next_y1;
+            next_x1 = (a / (4 * cos(t + ratia) * cos(t + ratia) - 3));
+            next_y1 = ((a * tan(t + ratia)) / (4 * cos(t + ratia) * cos(t + ratia) - 3));
+            t += ratia;
+            if (x1<=1 && x1>=-1 && next_x1<=1 && next_x1>=-1 && y1<=1 && y1>=-1 && next_y1<=1 && next_y1>=-1) {
+                glVertex2f(-1, 1); // First vertex
+                glVertex2f(x1, y1); // Second vertex
+                glVertex2f(next_x1, next_y1); // Third vertex
+            }
         }
 
     }
@@ -294,32 +299,28 @@ void Display5() {
     double b = 0.2;
 
 
-    double xmax, ymax, xmin, ymin;
-
     /**********************************
        Maximum/minimum values of x and y are computed.
        The limits of x(t) = a*t - b*sin(t) are -inf to the left and +inf to the right 
        so we initialize xmin and xmax with 0.
        For y(t) the min max value are reache in the point where cos(t) = -1 => ymax = a + b and cos(t) = 1 => ymin = a - b
       **********************************/
-    xmax = xmin = 0;
-    ymax = a + b;
-    ymin = a - b;
-    for (double t = tmin + ratia; t < tmax; t += ratia) {
-        double x1, y1;
-        x1 = a * t - b * sin(t);
-        xmax = (xmax < x1) ? x1 : xmax;
-        xmin = (xmin > x1) ? x1 : xmin;
-
-        y1 = a - b * cos(t);
-        ymax = (ymax < y1) ? y1 : ymax;
-        ymin = (ymin > y1) ? y1 : ymin;
-
-    }
-    std::cout<< "\n xmin = " << xmin << " xmax = " << xmax << " ymin = " << ymin << " ymax = " << ymax;
-
-    xmax = (fabs(xmax) > fabs(xmin)) ? fabs(xmax) : fabs(xmin);
-    ymax = (fabs(ymax) > fabs(ymin)) ? fabs(ymax) : fabs(ymin);
+    //double xmax, ymax, xmin, ymin;
+    //xmax = xmin = 0;
+    //ymax = a + b;
+    //ymin = a - b;
+    //for (double t = tmin + ratia; t < tmax; t += ratia) {
+    //    double x1, y1;
+    //    x1 = a * t - b * sin(t);
+    //    xmax = (xmax < x1) ? x1 : xmax;
+    //    xmin = (xmin > x1) ? x1 : xmin;
+    //    y1 = a - b * cos(t);
+    //    ymax = (ymax < y1) ? y1 : ymax;
+    //    ymin = (ymin > y1) ? y1 : ymin;
+    //}
+    //std::cout<< "\n xmin = " << xmin << " xmax = " << xmax << " ymin = " << ymin << " ymax = " << ymax;
+    //xmax = (fabs(xmax) > fabs(xmin)) ? fabs(xmax) : fabs(xmin);
+    //ymax = (fabs(ymax) > fabs(ymin)) ? fabs(ymax) : fabs(ymin);
 
     //Print the current value of a for this function
     glColor3f(0, 0, 0); // black
@@ -353,8 +354,8 @@ void Display5() {
     glBegin(GL_POINTS);
     for (double t = tmin; t < tmax; t += ratia) {
         double x1, y1;
-        x1 = a * t - b * sin(t);// / xmax;
-        y1 = a - b * cos(t);// / ymax;
+        x1 = a * t - b * sin(t);
+        y1 = a - b * cos(t);
         glVertex2f(x1, y1);
 
     }
@@ -362,6 +363,7 @@ void Display5() {
 }
 
 // the graph for The lemniscate of Bernoulli defined as r = a * sqrt(2 * cos(2 * t)) , x(t) = r * cos(t) and y(t) = r * sin(t).
+//scalat in functie de r
 void Display6() { 
     double pi = 4 * atan(1.0);
 
@@ -372,39 +374,32 @@ void Display6() {
     double a = 0.4;
 
 
-    double xmax, ymax, xmin, ymin;
-
     /**********************************
        Maximum/minimum values of x and y are computed.
        We initialize all the xmax, ymax, xmin, ymin values with 0 and then compute it.
       **********************************/
-    xmax = xmin = ymax = ymin = 0;
-
-    for (double t = tmin + ratia; t < tmax; t += ratia) {
-        double x1, y1;
-        double r = a * sqrt(2 * cos(2 * t));
-        x1 = r * cos(t);
-        xmax = (xmax < x1) ? x1 : xmax;
-        xmin = (xmin > x1) ? x1 : xmin;
-
-        y1 = r * sin(t);
-        ymax = (ymax < y1) ? y1 : ymax;
-        ymin = (ymin > y1) ? y1 : ymin;
-
-        r = -a * sqrt(2 * cos(2 * t));
-        x1 = r * cos(t);
-        xmax = (xmax < x1) ? x1 : xmax;
-        xmin = (xmin > x1) ? x1 : xmin;
-
-        y1 = r * sin(t);
-        ymax = (ymax < y1) ? y1 : ymax;
-        ymin = (ymin > y1) ? y1 : ymin;
-
-    }
-    std::cout << "\n xmin = " << xmin << " xmax = " << xmax << " ymin = " << ymin << " ymax = " << ymax;
-
-    xmax = (fabs(xmax) > fabs(xmin)) ? fabs(xmax) : fabs(xmin);
-    ymax = (fabs(ymax) > fabs(ymin)) ? fabs(ymax) : fabs(ymin);
+    //double xmax, ymax, xmin, ymin;
+    //xmax = xmin = ymax = ymin = 0;
+    //for (double t = tmin + ratia; t < tmax; t += ratia) {
+    //    double x1, y1;
+    //    double r = a * sqrt(2 * cos(2 * t));
+    //    x1 = r;
+    //    xmax = (xmax < x1) ? x1 : xmax;
+    //    xmin = (xmin > x1) ? x1 : xmin;
+    //    y1 = r;
+    //    ymax = (ymax < y1) ? y1 : ymax;
+    //    ymin = (ymin > y1) ? y1 : ymin;
+    //    x1 = -a * sqrt(2 * cos(2 * t));
+    //    x1 = r;
+    //    xmax = (xmax < x1) ? x1 : xmax;
+    //    xmin = (xmin > x1) ? x1 : xmin;
+    //    y1 = r;
+    //    ymax = (ymax < y1) ? y1 : ymax;
+    //    ymin = (ymin > y1) ? y1 : ymin;
+    //}
+    //std::cout << "\n xmin = " << xmin << " xmax = " << xmax << " ymin = " << ymin << " ymax = " << ymax;
+    //xmax = (fabs(xmax) > fabs(xmin)) ? fabs(xmax) : fabs(xmin);
+    //ymax = (fabs(ymax) > fabs(ymin)) ? fabs(ymax) : fabs(ymin);
 
     //Print the current value of a for this function
     glColor3f(0, 0, 0); // black
@@ -430,13 +425,13 @@ void Display6() {
     for (double t = tmin; t < tmax; t += ratia) {
         double x1, y1;
         double r = a * sqrt(2 * cos(2 * t));
-        x1 = r * cos(t);// / xmax;
-        y1 = r * sin(t);// / ymax;
+        x1 = r * cos(t);
+        y1 = r * sin(t);
         glVertex2f(x1, y1);
 
         r = -a * sqrt(2 * cos(2 * t));
-        x1 = r * cos(t);// / xmax;
-        y1 = r * sin(t);// / ymax;
+        x1 = r * cos(t);
+        y1 = r * sin(t);
         glVertex2f(x1, y1);
 
     }
@@ -447,19 +442,18 @@ void Display6() {
 void Display7() {
     double pi = 4 * atan(1.0);
 
-    double tmax = 100000;
+    double tmax =  5*pi;
     double tmin = 0;
     double ratia = 0.01;
 
     double a = 0.2;
-
-    double xmax, ymax, xmin, ymin;
 
     /**********************************
        Maximum/minimum values of x and y are computed.
        x(t) and y(t) both have the limmits of +-inf 
        so we initialize all the xmax, ymax, xmin, ymin values with 0 and then compute it.
       **********************************/
+    double xmax, ymax, xmin, ymin;
     xmax = xmin = ymax = ymin = 0;
     for (double t = tmin + ratia; t < tmax; t += ratia) {
         double x1, y1;
@@ -469,18 +463,17 @@ void Display7() {
             xmax = (xmax < x1) ? x1 : xmax;
             xmin = (xmin > x1) ? x1 : xmin;
         }
-
         y1 = r * sin(t);
         if (y1 != -INFINITY and y1 != INFINITY) {
             ymax = (ymax < y1) ? y1 : ymax;
             ymin = (ymin > y1) ? y1 : ymin;
         }
-
     }
-    std::cout << "\n xmin = " << xmin << " xmax = " << xmax << " ymin = " << ymin << " ymax = " << ymax;
-
     xmax = (fabs(xmax) > fabs(xmin)) ? fabs(xmax) : fabs(xmin);
     ymax = (fabs(ymax) > fabs(ymin)) ? fabs(ymax) : fabs(ymin);
+
+    double cmax = (ymax > xmax) ? ymax : xmax; // =  a * exp(1+tmax);
+    std::cout << cmax << " " << (a * exp(1 + tmax));
 
     //Print the current value of a for this function
     glColor3f(0, 0, 0); // black
@@ -507,8 +500,8 @@ void Display7() {
         if ((4 * cos(t - 3) * cos(t - 3)) != 0) {
             double x1, y1;
             double r = a * exp(1+t);
-            x1 = r * cos(t) / xmax;
-            y1 = r * sin(t) / ymax;
+            x1 = r * cos(t) / cmax;
+            y1 = r * sin(t) / cmax;
             glVertex2f(x1, y1);
         }
 
