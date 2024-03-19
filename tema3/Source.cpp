@@ -13,20 +13,19 @@
 
 // the size of the window measured in pixels
 #define dim 300
+
 // the maximum number of iterations for the Julia-Fatou set membership testing 
 #define NRITER_JF 5000
 // the maximum value of M for the Julia-Fatou set membership testing 
 #define MODMAX_JF 10000000
-
-// the maximum number of iterations for the Mandelbrot 
-#define NRITER_MB 8000
-// the maximum value of M for the Mandelbrot 
-#define MODMAX_MB 2
-
 // increments used in CJuliaFatou
 #define RX_JF 0.01
 #define RY_JF 0.01
 
+// the maximum value of the module for the Mandelbrot 
+#define MODMAX_MB 2
+// the maximum number of iterations for the Mandelbrot 
+#define NRITER_MB 8000
 // increments used in CMandelbrot
 #define RX_MB 0.005
 #define RY_MB 0.005
@@ -572,12 +571,12 @@ public:
                 CComplex c(x, y);
                 int r = isIn(c);
                 if (r == 0) {
-                    glColor3f(1.0, 0.0, 0.0);
+                    glColor3f(0.0, 0.0, 0.0);
                     glVertex3d(x / 2, y / 2, 0);
                 }
                 else {
-                    float t = (float)r / m.nriter;
-                    glColor3f(1.0, 1.0 - t, 1.0 - t);
+                    float c = (float)r / m.nriter;
+                    glColor3f(1.0 , 1.0 - c, 1.0 - c);
                     glVertex3d(x / 2, y / 2, 0);
                 }
             }
@@ -951,7 +950,7 @@ void Display9() {
     nivel++;
 }
 
-// displays the SierpinskiTri key = "-"
+// displays the SierpinskiTri
 void Display10() {
     CArrowhead car;
     car.afisare(1.3, nivel);
@@ -987,7 +986,7 @@ void Init(void) {
 
 void Display(void) {
     switch (prevKey) {
-    case '0':
+    case '-':
         glClear(GL_COLOR_BUFFER_BIT);
         nivel = 0;
         fprintf(stderr, "nivel = %d\n", nivel);
@@ -1028,7 +1027,7 @@ void Display(void) {
         glClear(GL_COLOR_BUFFER_BIT);
         Display9();
         break;
-    case '-':
+    case '0':
         glClear(GL_COLOR_BUFFER_BIT);
         Display10();
         break;

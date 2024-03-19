@@ -216,9 +216,6 @@ void Display3() {
 
 // the graph of: x(t) = a/ 4cos^2(t) - 3 and y(t) = atan(t)/ 4cos^2(t) - 3, with t in (-pi/2, pi/2) \ {+-pi/6}.
 void Display4() {
-    //dem matematica de cum selectam sectorul in functie de eficineta
-    //selectam un sector si facem graficul pt el
-    //+triunghiuri  cu gl triangle
     double pi = 4 * atan(1.0);
 
     double ratia = 0.01;
@@ -227,28 +224,7 @@ void Display4() {
 
     double a = 0.2;
 
-
-    //double xmin = 0, ymin = 0;
-    //double dmin = INFINITY;
-    //for (double t = tmin + ratia; t < tmax; t += ratia) {
-    //    double x1, y1;
-    //    if ((4 * cos(t) * cos(t)) != 0) {
-    //        x1 = (a / (4 * cos(t) * cos(t) - 3));
-    //        y1 = ((a * tan(t)) / (4 * cos(t) * cos(t) - 3));
-    //        if (sqrt(x1 * x1 + y1 * y1) < dmin) {
-    //            xmin = x1;
-    //            ymin = y1;
-    //            dmin = sqrt(x1 * x1 + y1 * y1);
-    //        }
-    //    }
-    //}
-    //double scale = (fabs(ymin) < fabs(xmin)) ? fabs(ymin) : fabs(xmin);
-    //scale = 1 / scale;
-    //xmin *= scale;
-    //ymin *= scale;
-    //std::cout << xmin << "  " << ymin << "  " << dmin;
-    //Print the current value of a for this function
-    glColor3f(0, 0, 0); // black
+    glColor3f(0, 0, 0); 
     glRasterPos2f(-0.8, -0.5);
     const char* text = "The trisectrix of Longchamps";
 
@@ -265,7 +241,24 @@ void Display4() {
         glutBitmapCharacter(GLUT_BITMAP_HELVETICA_12, text[i]);
     }
 
-    glColor3f(1, 0.1, 0.1); // rosu
+
+    glColor3f(0, 0, 1);//albastru
+    glBegin(GL_LINE_STRIP);
+
+    for (double t = tmin; t <tmax; t += ratia)
+    {
+        double x1, y1;
+        if (t != (-pi / 6) || t != pi / 6)
+        {
+            x1 = a / (4 * cos(t) * cos(t) - 3);
+            y1 = a * tan(t) / (4 * cos(t) * cos(t) - 3);
+            glVertex2f(x1, y1);
+        }
+    }
+    glEnd();
+
+
+    glColor3f(1, 0.1, 0.1);
     glBegin(GL_TRIANGLES);
     for (double t = tmin; t < tmax; t += ratia) {
         if ((4 * cos(t) * cos(t) - 3) != 0){
@@ -277,9 +270,10 @@ void Display4() {
             next_y1 = ((a * tan(t + ratia)) / (4 * cos(t + ratia) * cos(t + ratia) - 3));
             t += ratia;
             if (x1<=1 && x1>=-1 && next_x1<=1 && next_x1>=-1 && y1<=1 && y1>=-1 && next_y1<=1 && next_y1>=-1) {
-                glVertex2f(-1, 1); // First vertex
-                glVertex2f(x1, y1); // Second vertex
-                glVertex2f(next_x1, next_y1); // Third vertex
+                //glVertex2f(-0.707106, 1);
+                glVertex2f(-1, 1);
+                glVertex2f(x1, y1);
+                glVertex2f(next_x1, next_y1); 
             }
         }
 
@@ -509,6 +503,49 @@ void Display7() {
     glEnd();
 }
 
+// the graph of: x(t) = a/ 4cos^2(t) - 3 and y(t) = atan(t)/ 4cos^2(t) - 3, with t in (-pi/2, pi/2) \ {+-pi/6}.
+void Display8() {
+    double pi = 4 * atan(1.0);
+
+    double ratia = 0.01;
+    double tmax = pi / 2;
+    double tmin = -pi / 2;
+
+    double a = 0.2;
+
+    glColor3f(0, 0, 0);
+    glRasterPos2f(-0.8, -0.5);
+    const char* text = "The trisectrix of Longchamps";
+
+    for (int i = 0; text[i] != '\0'; ++i) {
+        glutBitmapCharacter(GLUT_BITMAP_HELVETICA_12, text[i]);
+    }
+
+    glRasterPos2f(-0.8, -0.6);
+    std::ostringstream oss;
+    oss << "a = " << a;
+    std::string s = oss.str();
+    text = s.c_str();
+    for (int i = 0; text[i] != '\0'; ++i) {
+        glutBitmapCharacter(GLUT_BITMAP_HELVETICA_12, text[i]);
+    }
+
+    glColor3f(1, 0.1, 0.1);
+    glBegin(GL_POINTS);
+    for (double t = tmin; t < tmax; t += ratia) {
+        if ((4 * cos(t) * cos(t) - 3) != 0) {
+            double x1, y1;
+            x1 = (a / (4 * cos(t) * cos(t) - 3));
+            y1 = ((a * tan(t)) / (4 * cos(t) * cos(t) - 3));
+            if (x1 <= 1 && x1 >= -1 && y1 <= 1 && y1 >= -1) {
+                glVertex2f(x1, y1);
+            }
+        }
+
+    }
+    glEnd();
+}
+
 void Init(void) {
 
     glClearColor(1.0, 1.0, 1.0, 1.0);
@@ -544,6 +581,9 @@ void Display(void) {
         break;
     case '7':
         Display7();
+        break;
+    case '8':
+        Display8();
         break;
     default:
         break;
